@@ -64,6 +64,7 @@ const Callapi = () => {
         navigate(courseRoutes[id] || '/'); // ถ้า id ไม่ตรง ให้ไปที่หน้าแรก
     };
 
+    
 
     return (
         <Container maxWidth="xl" sx={{ mt: 10 }}>

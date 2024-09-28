@@ -1,4 +1,4 @@
-import  { useState, useRef } from 'react';
+import  { useState, useRef,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -23,6 +23,15 @@ const Python = () => {
     const [watchedVideos, setWatchedVideos] = useState<number[]>([]);
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
+    const localStorageKey = 'watchedVideos-Python';
+
+    useEffect(() => {
+        const savedWatchedVideos = localStorage.getItem(localStorageKey);
+        if (savedWatchedVideos) {
+            setWatchedVideos(JSON.parse(savedWatchedVideos));
+        }
+    }, [localStorageKey]);
+
     const handleVideoSelect = (video: { id: number; title: string; duration: string; src: string }) => {
         setSelectedVideo(video);
         if (videoRef.current) {
@@ -31,8 +40,13 @@ const Python = () => {
     };
 
     const handleVideoEnd = () => {
-        setWatchedVideos((prev) => [...prev, selectedVideo.id]);
+        if (!watchedVideos.includes(selectedVideo.id)) {
+            const updatedWatchedVideos = [...watchedVideos, selectedVideo.id];
+            setWatchedVideos(updatedWatchedVideos);
+            localStorage.setItem(localStorageKey, JSON.stringify(updatedWatchedVideos)); // บันทึกข้อมูลเมื่อวิดีโอจบ
+        }
     };
+    
 
     return (
         <Box

@@ -1,4 +1,4 @@
-import  { useState, useRef } from 'react';
+import  { useState, useRef,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -24,6 +24,15 @@ const Web = () => {
     const [watchedVideos, setWatchedVideos] = useState<number[]>([]);
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
+    const localStorageKey = 'watchedVideos-Web';
+
+    useEffect(() => {
+        const savedWatchedVideos = localStorage.getItem(localStorageKey);
+        if (savedWatchedVideos) {
+            setWatchedVideos(JSON.parse(savedWatchedVideos));
+        }
+    }, [localStorageKey]);
+
     const handleVideoSelect = (video: { id: number; title: string; duration: string; src: string }) => {
         setSelectedVideo(video);
         if (videoRef.current) {
@@ -32,8 +41,13 @@ const Web = () => {
     };
 
     const handleVideoEnd = () => {
-        setWatchedVideos((prev) => [...prev, selectedVideo.id]);
+        if (!watchedVideos.includes(selectedVideo.id)) {
+            const updatedWatchedVideos = [...watchedVideos, selectedVideo.id];
+            setWatchedVideos(updatedWatchedVideos);
+            localStorage.setItem(localStorageKey, JSON.stringify(updatedWatchedVideos)); // บันทึกข้อมูลเมื่อวิดีโอจบ
+        }
     };
+    
 
   return (
     <Box
@@ -79,7 +93,7 @@ const Web = () => {
                     <Typography variant="body2" sx={{ mt: 1 }}>
                     Take your JavaScript skills to the next level with this advanced course.
                     </Typography>
-                    <Chip label="Programming Fundamentals" variant="outlined" sx={{ mt: 2 }} />
+                    <Chip label="Web Development" variant="outlined" sx={{ mt: 2 }} />
 
                     <Typography variant="h6" sx={{ mt: 4 }}>
                         Lessons in this class
